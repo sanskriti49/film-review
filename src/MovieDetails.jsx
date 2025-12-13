@@ -150,7 +150,7 @@ export default function MovieDetails({
 	useEffect(() => {
 		if (!movie?.Title) return;
 		document.title = `Movie | ${movie.Title}`;
-		return () => (document.title = "CineTrack ");
+		return () => (document.title = "CineBuzz ");
 	}, [movie]);
 
 	function handleRatingChange(newRating) {

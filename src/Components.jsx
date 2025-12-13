@@ -21,7 +21,7 @@ export function NavBar({ children }) {
 						🍿
 					</span>
 					<h1 className="text-xl font-bold cinzel tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-300">
-						CineTrack
+						CineBuzz
 					</h1>
 				</div>
 				<div className="flex items-center gap-4 md:gap-6">{children}</div>
