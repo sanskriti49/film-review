@@ -3,6 +3,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Inter:wght@300..700&family=Poppins:wght@300;400;600&family=Raleway:wght@400;700&display=swap");
 
 @import "tailwindcss";
 :root {
@@ -22,6 +23,22 @@
 		format("truetype");
 	font-weight: 700;
 	font-style: normal;
+}
+/* Add smooth scrolling */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for Webkit */
+::-webkit-scrollbar {
+	width: 6px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: #4f46e5;
+	border-radius: 10px;
 }
 .zirkel {
 	font-family: "Zirkel", serif;

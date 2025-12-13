@@ -3,7 +3,15 @@ import { useState, useEffect } from "react";
 import { BeatLoader } from "react-spinners";
 import ReplayIcon from "@mui/icons-material/Replay";
 import useKey from "./useKey";
-import { Clapperboard, Undo2 } from "lucide-react";
+import {
+	CalendarDays,
+	CheckCircle2,
+	Clapperboard,
+	Clock,
+	Film,
+	Star,
+	Undo2,
+} from "lucide-react";
 import RecommendedMoviesGrid from "./RecommendedMoviesGrid";
 
 export default function MovieDetails({
@@ -34,10 +42,6 @@ export default function MovieDetails({
 	useKey("Escape", onCloseMovie);
 	const isSmallList = watched.length <= 3;
 	const [similarMovies, setSimilarMovies] = useState([]);
-
-	// In MovieDetails.js
-
-	// ... other imports and component definition ...
 
 	useEffect(() => {
 		async function getMovieDetails() {
@@ -200,128 +204,144 @@ export default function MovieDetails({
 	} = movie || {};
 
 	return (
-		<div className="relative text-white text-base">
+		<div className="relative h-full flex flex-col text-gray-100 overflow-y-auto custom-scrollbar">
 			{isLoading ? (
-				<div className="absolute inset-0 flex items-center justify-center bg-black/50">
-					<BeatLoader color="#7950f2" />
+				<div className="absolute inset-0 flex items-center justify-center bg-[#0f0c29]">
+					<BeatLoader color="#a78bfa" />
 				</div>
 			) : (
 				<>
-					<header className="relative flex bg-slate-900/70 rounded-xl overflow-hidden shadow-lg border border-slate-700/50">
+					{/* --- HERO HEADER --- */}
+					<div className="relative w-full h-[400px] flex-shrink-0">
+						{/* Back Button - Absolute & Floating */}
 						<button
 							onClick={onCloseMovie}
-							className="absolute top-2 right-3 flex items-center justify-center w-8 h-8 rounded-full bg-white text-black text-xl hover:bg-[#fa5252] hover:text-white transition-colors shadow-md"
+							className="cursor-pointer absolute top-4 left-4 z-50 p-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 transition-all hover:-translate-x-1"
 						>
-							<Undo2 />
+							<Undo2 className="w-6 h-6" />
 						</button>
 
-						{/* Poster */}
-						<img
-							className="w-1/4 object-cover"
-							src={poster}
-							alt={`Poster of ${title}`}
-						/>
-
-						{/* Info */}
-						<div className="flex flex-col gap-3 px-6 py-6 w-full">
-							<h2 className="text-3xl  font-medium tracking-wide cinzel">
-								{title}
-							</h2>
-
-							<div className="flex  flex-wrap gap-3 text-base text-gray-400">
-								<span className="poppins">{released}</span>
-								<span>&bull;</span>
-								<span className="poppins">{runtime}</span>
-								<span>&bull;</span>
-								<span className="poppins">{genre}</span>
-							</div>
-
-							<p className="flex items-center gap-2 text-lg font-semibold text-yellow-400">
-								⭐ {imdbRating}
-								<span className="text-sm text-gray-400 font-normal">IMDb</span>
-							</p>
-						</div>
-					</header>
-
-					{/* Plot + Extra Info */}
-					<section className="px-6 py-6 flex flex-col items-center gap-4">
+						{/* Blurred Background Image */}
 						<div
-							className="bg-slate-900/60 border border-slate-700/40 
-                rounded-xl py-4 px-6 w-fit shadow-md flex flex-col items-center"
-						>
-							{" "}
-							{!isWatched ? (
-								<>
-									<StarRating
-										size="28px"
-										onRatingChange={handleRatingChange}
-										initialRating={userRating}
-									/>
-									<button
-										className="inter mt-4 px-6 py-2.5 rounded-full 
-										bg-gradient-to-r from-[#622dbd] to-[#4f46e5] 
-										hover:from-[#6d28d9] hover:to-[#4338ca]
-										text-white font-semibold shadow-lg shadow-indigo-500/30
-										transition-all duration-300 ease-in-out
-										hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
-										onClick={() => onAddWatched(movie)}
-										disabled={isWatched}
-									>
-										{isWatched ? "✅ Added" : "➕ Add to List"}
-									</button>
-								</>
-							) : (
-								<div className="text-center text-sm">
-									{isClickedRetry || !isRated ? (
+							className="absolute inset-0 bg-cover bg-center opacity-40 blur-xl scale-110"
+							style={{ backgroundImage: `url(${poster})` }}
+						/>
+						{/* Gradient Overlay for readability */}
+						<div className="absolute inset-0 bg-gradient-to-t from-[#0f0c29] via-[#0f0c29]/60 to-transparent" />
+
+						{/* Content Container */}
+						<div className="absolute bottom-0 left-0 w-full p-6 flex items-end gap-6 z-10">
+							<img
+								className="w-32 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.5)] border-2 border-white/10 hidden sm:block"
+								src={poster}
+								alt={title}
+							/>
+							<div className="flex flex-col gap-2 pb-2">
+								<h2 className="text-3xl md:text-4xl font-bold cinzel text-white leading-tight drop-shadow-lg">
+									{title}
+								</h2>
+
+								{/* Metadata Chips */}
+								<div className="flex flex-wrap items-center gap-3 text-xs md:text-sm font-medium text-gray-300">
+									<span className="px-2 py-1 bg-white/10 backdrop-blur-md rounded-md border border-white/5 flex items-center gap-1">
+										<CalendarDays className="w-3 h-3 text-indigo-400" />{" "}
+										{released}
+									</span>
+									<span className="px-2 py-1 bg-white/10 backdrop-blur-md rounded-md border border-white/5 flex items-center gap-1">
+										<Clock className="w-3 h-3 text-fuchsia-400" /> {runtime}
+									</span>
+									<span className="px-2 py-1 bg-white/10 backdrop-blur-md rounded-md border border-white/5 flex items-center gap-1">
+										<Film className="w-3 h-3 text-cyan-400" /> {genre}
+									</span>
+								</div>
+
+								<div className="flex items-center gap-2 mt-1">
+									<Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+									<span className="text-lg font-bold text-white">
+										{imdbRating}
+									</span>
+									<span className="text-xs text-gray-400">/10 IMDb</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{/* --- BODY CONTENT --- */}
+					<div className="p-6 md:p-8 space-y-8 bg-[#0f0c29] flex-1">
+						{/* RATING SECTION */}
+						<div className="flex justify-center">
+							<div className="bg-slate-900/50 p-6 rounded-2xl border border-white/5 flex flex-col items-center gap-4 w-full max-w-md shadow-inner">
+								{!isWatched ? (
+									<>
 										<StarRating
-											size="28px"
+											size="32px"
+											maxRating={10}
+											color="#fcc419"
 											onRatingChange={handleRatingChange}
 											initialRating={userRating}
 										/>
-									) : (
-										<p className="flex items-center justify-center gap-2">
-											<span className="text-lg">
-												You rated this movie{" "}
-												<b className="text-[#fab005]">{userRating}</b> stars
-											</span>
-											<ReplayIcon
-												sx={{
-													fontSize: "22px",
-													cursor: "pointer",
-												}}
-												onClick={handleRetry}
-											/>
+										<button
+											className="cursor-pointer w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold shadow-lg hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-300"
+											onClick={() => onAddWatched(movie)}
+										>
+											+ Add to Library
+										</button>
+									</>
+								) : (
+									<div className="flex flex-col items-center gap-2">
+										<div className="text-emerald-400 font-medium flex items-center gap-2 bg-emerald-400/10 px-4 py-2 rounded-full border border-emerald-400/20">
+											<CheckCircle2 className="w-5 h-5" /> Added to Library
+										</div>
+										<p className="text-sm text-gray-400 mt-2">
+											Your rating:{" "}
+											<span className="text-yellow-400 font-bold text-lg">
+												{userRating}
+											</span>{" "}
+											/ 10
 										</p>
-									)}
-								</div>
-							)}
+									</div>
+								)}
+							</div>
 						</div>
-						<div className="text-center raleway max-w-2xl space-y-2">
-							<p className="italic text-base text-gray-300 leading-relaxed">
+
+						{/* PLOT & CREDITS */}
+						<div className="space-y-4">
+							<h3 className="text-lg font-bold text-white border-l-4 border-indigo-500 pl-3">
+								Plot Summary
+							</h3>
+							<p className="text-gray-300 leading-relaxed font-light text-lg">
 								{plot}
 							</p>
-							<p className="text-sm  text-gray-400 font-medium pt-4">
-								🎭 Starring {actors}
-							</p>
-							<p className="text-sm text-gray-400">🎬 Directed by {director}</p>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/5">
+								<div>
+									<span className="text-gray-500 text-sm uppercase tracking-wider block mb-1">
+										Starring
+									</span>
+									<span className="text-gray-200">{actors}</span>
+								</div>
+								<div>
+									<span className="text-gray-500 text-sm uppercase tracking-wider block mb-1">
+										Director
+									</span>
+									<span className="text-gray-200">{director}</span>
+								</div>
+							</div>
 						</div>
-					</section>
-					{/* <div>
-						<h2 className="text-xl font-semibold text-indigo-400 mb-3">
-							Recommended For You
-						</h2> */}
-					{similarMovies.length > 0 && (
-						<div className="mt-6">
-							<h3 className="text-lg font-semibold mb-3">
-								Recommended For You
-							</h3>
-							<RecommendedMoviesGrid
-								movies={similarMovies}
-								onSelect={onSelectRecommended}
-							/>
-						</div>
-					)}
-					{/* </div> */}
+
+						{/* RECOMMENDATIONS */}
+						{similarMovies.length > 0 && (
+							<div className="pt-6">
+								<h3 className="text-lg font-bold text-white border-l-4 border-fuchsia-500 pl-3 mb-4">
+									More Like This
+								</h3>
+								<RecommendedMoviesGrid
+									movies={similarMovies}
+									onSelect={onSelectRecommended}
+									limit={4}
+								/>
+							</div>
+						)}
+					</div>
 				</>
 			)}
 		</div>

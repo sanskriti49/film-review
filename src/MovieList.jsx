@@ -33,7 +33,7 @@ export default function MovieList({
 				return (
 					<Movie
 						movie={movie}
-						key={movie.imdbID} // It's safer to use imdbID here as it's more unique
+						key={movie.imdbID}
 						onSelectMovie={onSelectMovie}
 						onAddWatch={handleAddWatch}
 						isWatched={isWatched}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./index.css";
 import { ErrorMessage, NavBar, Search, NumResults } from "./Components";
-import { UserRound } from "lucide-react";
+import { Sparkles, UserRound } from "lucide-react";
 import MovieList from "./MovieList";
 import MovieDetails from "./MovieDetails";
 import WatchedMoviesList from "./WatchedMoviesList";
@@ -23,7 +23,6 @@ export default function App() {
 	const [ratingDecisions, setRatingDecisions] = useState(0);
 	const { movies, isLoading, error } = useMovies(query);
 
-	// This function works for movies that already have a proper imdbID
 	function handleSelectMovie(id) {
 		setSelectedId((selectedId) => (id === selectedId ? null : id));
 	}
@@ -32,7 +31,6 @@ export default function App() {
 		setSelectedId(null);
 	}
 
-	// This function handles movies from TMDB by first finding their imdbID
 	async function handleSelectRecommendedMovie(tmdbId) {
 		try {
 			const res = await fetch(
@@ -54,25 +52,9 @@ export default function App() {
 		}
 	}
 
-	// function createWatchedMovie(movie, userRating = 0, ratingDecisions = 0) {
-	// 	return {
-	// 		imdbID: movie.imdbID,
-	// 		title: movie.Title || movie.title,
-	// 		year: movie.Year || movie.year,
-	// 		poster: movie.Poster || movie.poster,
-	// 		imdbRating: Number(movie.imdbRating) || 0,
-	// 		userRating: userRating || 0,
-	// 		runtime: movie.Runtime
-	// 			? parseInt(movie.Runtime.split(" ")[0])
-	// 			: movie.runtime || 0,
-	// 		countRatingDecisions: ratingDecisions,
-	// 	};
-	// }
-
 	function createWatchedMovie(movie, userRating = 0, ratingDecisions = 0) {
 		return {
 			imdbID: movie.imdbID,
-			// ✅ FIX: Use uppercase keys to match the data shape used everywhere else.
 			Title: movie.Title || movie.title,
 			Year: movie.Year || movie.year,
 			Poster: movie.Poster || movie.poster,
@@ -85,49 +67,9 @@ export default function App() {
 		};
 	}
 
-	// async function handleAddWatch(movie) {
-	// 	const isMovieWatched = isMovieInList(watched, movie.imdbID);
-
-	// 	if (isMovieWatched) {
-	// 		const updatedWatched = watched.filter(
-	// 			(watchedMovie) => watchedMovie.imdbID !== movie.imdbID
-	// 		);
-	// 		setWatched(updatedWatched);
-	// 	} else {
-	// 		try {
-	// 			// We need the full details from OMDb to store runtime etc.
-	// 			// This fetch might be redundant if the movie was just viewed,
-	// 			// but is necessary if added directly from a list.
-	// 			const res = await fetch(
-	// 				`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=fdab5723`
-	// 			);
-	// 			if (!res.ok) throw new Error("Error fetching movie details");
-
-	// 			const movieDetails = await res.json();
-	// 			if (movieDetails.Response === "False")
-	// 				throw new Error("Movie not found");
-
-	// 			const newWatchedMovie = createWatchedMovie(
-	// 				movieDetails,
-	// 				userRating,
-	// 				ratingDecisions
-	// 			);
-	// 			const updatedWatched = [...watched, newWatchedMovie];
-	// 			setWatched(updatedWatched);
-	// 		} catch (err) {
-	// 			console.log("Failed to fetch movie details: ", err);
-	// 		}
-	// 	}
-	// }
-	// ~ App.js
-
-	// ... other functions ...
-
 	async function handleAddWatch(movie) {
-		// Determine the correct IMDb ID, fetching it if necessary
 		let correctImdbID = movie.imdbID;
 
-		// If the ID doesn't look like a real imdbID, it's from TMDB
 		if (!movie.imdbID.startsWith("tt")) {
 			try {
 				console.log(`Fetching IMDb ID for TMDB ID: ${movie.imdbID}`);
@@ -182,7 +124,6 @@ export default function App() {
 		}
 	}
 
-	// ... rest of your App.js component ...
 	useEffect(() => {
 		const isMovieWatched = findMovieInList(watched, selectedId);
 		setIsAdded(Boolean(isMovieWatched));
@@ -201,36 +142,6 @@ export default function App() {
 		});
 	}
 
-	// useEffect(() => {
-	// 	async function getTrendingWithDetails() {
-	// 		try {
-	// 			const res = await fetch(
-	// 				`https://api.themoviedb.org/3/trending/movie/week?api_key=911f5b3092f6e66faf04d634cb0005fc`
-	// 			);
-	// 			if (!res.ok) throw new Error("Failed to fetch trending movies");
-
-	// 			const data = await res.json();
-	// 			const normalized = data.results.map((m) => ({
-	// 				imdbID: m.id.toString(), // Use TMDB id as the unique key for now
-	// 				Title: m.title,
-	// 				Year: m.release_date ? m.release_date.split("-")[0] : "—",
-	// 				Poster: m.poster_path
-	// 					? `https://image.tmdb.org/t/p/w300${m.poster_path}`
-	// 					: null,
-	// 			}));
-
-	// 			setTrendingDetails(normalized);
-	// 		} catch (err) {
-	// 			console.error("Error fetching trending details:", err);
-	// 		}
-	// 	}
-
-	// 	getTrendingWithDetails();
-	// }, []);
-	// In App.js
-
-	// ...
-
 	useEffect(() => {
 		async function getTrendingWithDetails() {
 			try {
@@ -241,9 +152,8 @@ export default function App() {
 
 				const data = await res.json();
 
-				// ✅ FIX: Use .slice(0, 10) here to limit the trending results to 10
 				const normalized = data.results.slice(0, 10).map((m) => ({
-					imdbID: m.id.toString(), // Use TMDB id as the unique key for now
+					imdbID: m.id.toString(),
 					Title: m.title,
 					Year: m.release_date ? m.release_date.split("-")[0] : "—",
 					Poster: m.poster_path
@@ -260,7 +170,6 @@ export default function App() {
 		getTrendingWithDetails();
 	}, []);
 
-	// ...
 	useEffect(() => {
 		async function getRecommendations() {
 			try {
@@ -279,33 +188,48 @@ export default function App() {
 	const isSearching = query.length > 2;
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950 text-gray-100 flex flex-col">
+		<div className="min-h-screen bg-[#0f0c29] bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-gray-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
 			<NavBar>
 				<Search query={query} setQuery={setQuery} />
-				<NumResults movies={isSearching ? movies : []} />
-				<UserRound />
+				<div className="flex items-center gap-4 ml-auto">
+					<NumResults movies={isSearching ? movies : []} />
+					<div className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition cursor-pointer backdrop-blur-md">
+						<UserRound className="w-5 h-5 text-indigo-200" />
+					</div>
+				</div>
 			</NavBar>
 
-			<main className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 overflow-hidden">
-				{/* LEFT BOX: Dynamic Content (Trending or Search) */}
-				<section className="backdrop-blur-md bg-slate-900/50 border border-slate-800/40 rounded-xl shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 p-4 flex flex-col">
-					<h2 className="text-xl raleway uppercase font-bold mb-3 text-slate-200 tracking-wide">
-						{isSearching ? "Search Results" : "Trending Movies"}
-					</h2>
-					<div className="flex-1 overflow-y-auto pr-2">
+			<main className="flex-1 max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[1fr_450px] xl:grid-cols-[1fr_500px] gap-8 p-6 lg:p-8 h-[calc(100vh-5rem)]">
+				{/* LEFT BOX: Search / Trending */}
+				<section className="relative flex flex-col backdrop-blur-xl bg-slate-900/40 border border-white/10 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] overflow-hidden group">
+					{/* Decorative Gradient Blob */}
+					<div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-50"></div>
+
+					<div className="p-6 pb-2 flex items-center justify-between z-10">
+						<h2 className="text-2xl raleway font-bold text-white tracking-wide flex items-center gap-2">
+							{isSearching ? (
+								"Search Results"
+							) : (
+								<>
+									<Sparkles className="text-yellow-400 w-5 h-5" /> Trending Now
+								</>
+							)}
+						</h2>
+					</div>
+
+					<div className="flex-1 overflow-y-auto px-4 pb-4 custom-scrollbar">
 						{isSearching ? (
-							// SEARCH VIEW
 							<>
 								{isLoading && (
-									<div className="flex items-center justify-center h-full">
-										<BeatLoader color="#a78bfa" />
+									<div className="flex items-center justify-center h-64">
+										<BeatLoader color="#818cf8" size={15} />
 									</div>
 								)}
 								{!isLoading && !error && (
 									<MovieList
 										movies={movies}
 										watched={watched}
-										onSelectMovie={handleSelectRecommendedMovie}
+										onSelectMovie={handleSelectRecommendedMovie} // Logic kept
 										handleAddWatch={handleAddWatch}
 										isMovieInList={isMovieInList}
 									/>
@@ -313,17 +237,15 @@ export default function App() {
 								{error && <ErrorMessage message={error} />}
 							</>
 						) : (
-							// TRENDING VIEW
 							<>
 								{trendingDetails.length === 0 ? (
-									<div className="flex items-center justify-center h-full">
-										<BeatLoader color="#a78bfa" />
+									<div className="flex items-center justify-center h-64">
+										<BeatLoader color="#818cf8" size={15} />
 									</div>
 								) : (
 									<MovieList
 										movies={trendingDetails}
 										watched={watched}
-										// ✅ CORRECT: Use the TMDB handler for trending movies
 										onSelectMovie={handleSelectRecommendedMovie}
 										handleAddWatch={handleAddWatch}
 										isMovieInList={isMovieInList}
@@ -334,8 +256,8 @@ export default function App() {
 					</div>
 				</section>
 
-				{/* RIGHT BOX: Watched List or Movie Details */}
-				<section className="backdrop-blur-md bg-slate-900/50 border border-slate-800/40 rounded-xl shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 p-4 flex flex-col overflow-hidden">
+				{/* RIGHT BOX: Details / Watched */}
+				<section className="relative flex flex-col backdrop-blur-xl bg-black/40 border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
 					{selectedId ? (
 						<MovieDetails
 							watched={watched}
@@ -352,22 +274,23 @@ export default function App() {
 							setIsRated={setIsRated}
 							ratingDecisions={ratingDecisions}
 							setRatingDecisions={setRatingDecisions}
-							isAdded={isAdded}
-							setIsAdded={setIsAdded}
 							onSelectRecommended={handleSelectRecommendedMovie}
 							recommendedMovies={trendingDetails}
 						/>
 					) : (
-						<div className="flex-1 flex flex-col overflow-y-auto pr-2">
-							<WatchedSummary watched={watched} />
-							<WatchedMoviesList
-								watched={watched}
-								// ✅ CORRECT: Watched movies have imdbID, so use direct handler
-								handleSelectMovie={handleSelectMovie}
-								onDeleteWatched={handleDeleteWatch}
-								onSelectRecommended={handleSelectRecommendedMovie}
-								recommendedMovies={trendingDetails}
-							/>
+						<div className="flex flex-col h-full">
+							<div className="p-6 bg-gradient-to-b from-indigo-900/30 to-transparent">
+								<WatchedSummary watched={watched} />
+							</div>
+							<div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+								<WatchedMoviesList
+									watched={watched}
+									handleSelectMovie={handleSelectMovie}
+									onDeleteWatched={handleDeleteWatch}
+									onSelectRecommended={handleSelectRecommendedMovie}
+									recommendedMovies={trendingDetails}
+								/>
+							</div>
 						</div>
 					)}
 				</section>
