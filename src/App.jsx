@@ -18,7 +18,7 @@ export default function App() {
 	const [userRating, setUserRating] = useState(null);
 	const [isAdded, setIsAdded] = useState(false);
 	const [isRated, setIsRated] = useState(false);
-	const [recommended, setRecommended] = useState([]);
+	// const [recommended, setRecommended] = useState([]);
 	const [trendingDetails, setTrendingDetails] = useState([]);
 	const [ratingDecisions, setRatingDecisions] = useState(0);
 	const { movies, isLoading, error } = useMovies(query);
@@ -170,20 +170,20 @@ export default function App() {
 		getTrendingWithDetails();
 	}, []);
 
-	useEffect(() => {
-		async function getRecommendations() {
-			try {
-				const res = await fetch("http://localhost:8000/recommendations/4");
-				if (!res.ok) throw new Error("Failed to fetch");
-				const data = await res.json();
-				setRecommended(data);
-				// console.log("Recommended movies: ", data);
-			} catch (err) {
-				console.error("Error fetching recommendations:", err);
-			}
-		}
-		getRecommendations();
-	}, []);
+	// useEffect(() => {
+	// 	async function getRecommendations() {
+	// 		try {
+	// 			const res = await fetch("http://localhost:8000/recommendations/4");
+	// 			if (!res.ok) throw new Error("Failed to fetch");
+	// 			const data = await res.json();
+	// 			setRecommended(data);
+	// 			// console.log("Recommended movies: ", data);
+	// 		} catch (err) {
+	// 			console.error("Error fetching recommendations:", err);
+	// 		}
+	// 	}
+	// 	getRecommendations();
+	// }, []);
 
 	const isSearching = query.length > 2;
 

@@ -51,7 +51,7 @@ export default function MovieDetails({
 			try {
 				// --- Step 1: Fetch from OMDb (Primary Source) ---
 				const resOMDb = await fetch(
-					`http://www.omdbapi.com/?i=${selectedId}&apikey=fdab5723`
+					`https://www.omdbapi.com/?i=${selectedId}&apikey=fdab5723`
 				);
 				if (!resOMDb.ok) throw new Error("Error fetching OMDb movie details");
 
