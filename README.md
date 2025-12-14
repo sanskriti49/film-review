@@ -1,74 +1,109 @@
-🍿 CineBuzz
-CineBuzz is a full-stack movie tracking application that allows users to build a personal library of watched films. Users can search for movies, rate them, view detailed statistics about their viewing habits, and get recommendations. It features a modern, responsive "Glassmorphism" UI with a cinema-dark theme.
+# 🍿 CineBuzz
 
-✨ Features
-Authentication: Secure Login/Signup via Firebase (Email & Password) with ReCAPTCHA protection.
+CineBuzz is a full-stack movie tracking and review application that allows users to build a personal library of watched films. Users can search for movies, rate them, analyze their viewing habits, and get recommendations — all wrapped in a modern, responsive, cinema-dark UI.
 
-Movie Search: Real-time search using the OMDb API and TMDB API.
+---
 
-Personal Library: Add movies to your "Watched" list.
+## ✨ Features
 
-Rating System: Rate movies and compare your score with IMDb ratings.
+* **Authentication**
 
-Dashboard Analytics: View stats like total movies watched, total runtime, and average user rating.
+  * Secure Login & Signup using **Firebase Authentication**
+  * Email & Password auth with **reCAPTCHA protection**
 
-Responsive Design: Fully mobile-responsive with a custom hamburger menu and animations.
+* **Movie Search**
 
-User Profile: Update display name and manage account settings.
+  * Real-time movie search using **OMDb API**
+  * Posters, trending movies, and recommendations via **TMDB API**
 
-Backend Sync: All data is persisted in a PostgreSQL database.
+* **Personal Library**
 
-🛠️ Tech Stack
-Frontend:
+  * Add movies to a personal **Watched List**
+  * Persistent storage across devices
 
-React.js (Vite)
+* **Rating System**
 
-Tailwind CSS (Styling)
+  * Rate movies individually
+  * Compare your rating with IMDb ratings
 
-Framer Motion (Animations)
+* **Dashboard Analytics**
 
-Lucide React (Icons)
+  * Total movies watched
+  * Total runtime
+  * Average user rating
 
-Firebase Auth (Client SDK)
+* **User Profile**
 
-Backend:
+  * Update display name
+  * Manage account settings
 
-Node.js & Express.js
+* **Responsive Design**
 
-PostgreSQL (Database)
+  * Fully mobile-responsive layout
+  * Custom hamburger menu with smooth animations
 
-Firebase Admin SDK (Server-side Token Verification)
+* **Backend Sync**
 
-APIs:
+  * All user and movie data persisted in **PostgreSQL**
 
-OMDb API (Primary movie data)
+---
 
-TMDB API (Posters, Trending, and Recommendations)
+## 🛠️ Tech Stack
 
-🚀 Getting Started
-Follow these steps to set up the project locally.
+### Frontend
 
-Prerequisites
-Node.js (v16 or higher)
+* **React.js** (Vite)
+* **Tailwind CSS** (Styling)
+* **Framer Motion** (Animations)
+* **Lucide React** (Icons)
+* **Firebase Auth** (Client SDK)
 
-PostgreSQL installed and running
+### Backend
 
-A Firebase Project (for Auth)
+* **Node.js**
+* **Express.js**
+* **PostgreSQL**
+* **Firebase Admin SDK** (Token verification)
 
-API Keys for OMDb and TMDB
+### APIs
 
-1. Clone the Repository
-Bash
+* **OMDb API** – Movie metadata
+* **TMDB API** – Posters, trending movies, recommendations
 
-```[git clone (https://github.com/sanskriti49/film-review)]```
-```cd film-review```
+---
 
-2. Database Setup (PostgreSQL)
-Create a database (e.g., film_review) and run the following SQL commands to create the necessary tables:
+## 🚀 Getting Started
 
-SQL
+Follow the steps below to run CineBuzz locally.
 
+---
+
+## ✅ Prerequisites
+
+* Node.js **v16+**
+* PostgreSQL (installed & running)
+* Firebase Project (for authentication)
+* OMDb API Key
+* TMDB API Key
+
+---
+
+## 📦 1. Clone the Repository
+
+```bash
+git clone https://github.com/sanskriti49/film-review.git
+cd film-review
 ```
+
+---
+
+## 🗄️ 2. Database Setup (PostgreSQL)
+
+Create a database (e.g., `film_review`) and run the following SQL:
+
+### Users Table
+
+```sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
@@ -78,7 +113,9 @@ CREATE TABLE users (
 );
 ```
 
-```
+### Watched Movies Table
+
+```sql
 CREATE TABLE watched (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -93,20 +130,19 @@ CREATE TABLE watched (
 );
 ```
 
-3. Backend Setup
-Navigate to the server folder (or root if combined):
+---
 
-Install dependencies:
+## 🧠 3. Backend Setup
 
-Bash
-
+```bash
 cd server
 npm install
-Create a .env file in the server folder:
+```
 
-Code snippet
+Create a `.env` file inside the `server` folder:
 
-```PORT=5000
+```env
+PORT=5000
 DB_USER=your_postgres_user
 DB_PASSWORD=your_postgres_password
 DB_HOST=localhost
@@ -115,69 +151,94 @@ DB_NAME=film_review
 RECAPTCHA_SECRET_KEY=your_google_recaptcha_secret
 ```
 
-Add your Firebase Service Account Key:
+### Firebase Admin Setup
 
-Download serviceAccountKey.json from Firebase Project Settings > Service Accounts.
+1. Go to **Firebase Console → Project Settings → Service Accounts**
+2. Download `serviceAccountKey.json`
+3. Place it inside the `server` folder
+4. Add it to `.gitignore`
 
-Place it in the server folder (ensure this file is in your .gitignore).
+---
 
-4. Frontend Setup
-Navigate to the client folder:
+## 🎨 4. Frontend Setup
 
-Install dependencies:
-
-Bash
-```
+```bash
 cd client
 npm install
 ```
 
-Create a .env file in the client folder:
+Create a `.env` file inside the `client` folder:
 
-Code snippet
-```
+```env
 VITE_API_URL=http://localhost:5000
 VITE_TMDB_API_KEY=your_tmdb_api_key
-Configure Firebase in src/firebase.js using your project credentials.
 ```
 
-🏃‍♂️ Running the App
-Start the Backend Server:
+Configure Firebase inside `src/firebase.js` using your Firebase project credentials.
 
-Bash
+---
 
-# In the server terminal
-```npm start```
+## 🏃‍♂️ Running the App
+
+### Start Backend
+
+```bash
+cd server
+npm start
 # or
-```node index.js```
-Start the Frontend:
+node index.js
+```
 
-Bash
+### Start Frontend
 
-# In the client terminal
-```npm run dev```
-Open http://localhost:5173 to view it in the browser.
+```bash
+cd client
+npm run dev
+```
 
-📸 Screenshots
-(Add screenshots of your Dashboard, Login Page, and Mobile Menu here)
+Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
-🛡️ Security
-Firebase Tokens: The backend verifies the identity of every request using the Firebase Admin SDK middleware.
+---
 
-Environment Variables: Sensitive keys (Database passwords, API secrets) are stored in .env files and not committed to version control.
+## 🛡️ Security
 
-🤝 Contributing
-Contributions, issues, and feature requests are welcome!
+* **Firebase Token Verification**
 
-Fork the Project
+  * Every request is authenticated via Firebase Admin SDK
+* **Environment Variables**
 
-Create your Feature Branch (git checkout -b feature/AmazingFeature)
+  * All secrets stored securely in `.env` files
+  * No sensitive data committed to version control
 
-Commit your Changes (git commit -m 'Add some AmazingFeature')
+---
 
-Push to the Branch (git push origin feature/AmazingFeature)
+## 🤝 Contributing
 
-Open a Pull Request
+Contributions are welcome!
 
-📄 License
-Distributed under the MIT License. See LICENSE for more information.
+1. Fork the repository
+2. Create a feature branch
+
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. Commit changes
+
+   ```bash
+   git commit -m "Add AmazingFeature"
+   ```
+4. Push to branch
+
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**.
+See `LICENSE` for more information.
+
+---
