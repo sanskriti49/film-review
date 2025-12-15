@@ -66,6 +66,10 @@ const verifyFirebaseToken = async (req, res, next) => {
 	}
 };
 
+app.get("/", (req, res) => {
+	res.send("CineBuzz API is running! 🚀");
+});
+
 app.post("/verify-captcha", async (req, res) => {
 	const { token } = req.body;
 	const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
