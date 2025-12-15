@@ -2,20 +2,16 @@ import { motion } from "framer-motion";
 import { Calculator, Clock, Film, Star } from "lucide-react";
 
 function WatchedSummary({ watched }) {
-	// 1. FIX: Standard Average Function
 	const average = (arr) => {
 		if (!Array.isArray(arr) || arr.length === 0) return 0;
-		// Sum all numbers first, THEN divide by length
 		return arr.reduce((acc, cur) => acc + cur, 0) / arr.length;
 	};
 
-	// 2. FIX: Calculate Total Runtime (Sum) instead of Average
 	const totalRuntime = watched.reduce(
 		(acc, movie) => acc + (Number(movie.runtime) || 0),
 		0
 	);
 
-	// Calculate Averages
 	const userRatings = watched
 		.map((m) => Number(m.userRating) || 0)
 		.filter((r) => r > 0);

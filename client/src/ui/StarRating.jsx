@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 function StarRating({
 	maxRating = 10,
-	initialRating = 0, // Default to 0 instead of -1 for clarity
+	initialRating = 0,
 	onRatingChange,
 	starColor = "gold",
 	emptyStarColor = "gray",
@@ -11,7 +11,6 @@ function StarRating({
 	const [rating, setRating] = useState(initialRating);
 	const [hoverRating, setHoverRating] = useState(0);
 
-	// Sync internal rating when the prop from the parent changes
 	useEffect(() => {
 		setRating(initialRating);
 	}, [initialRating]);
@@ -49,7 +48,7 @@ function StarRating({
 					color: "gold",
 					lineHeight: 1,
 					margin: 0,
-					minWidth: "30px", // Prevents layout shift
+					minWidth: "30px",
 				}}
 			>
 				{displayRating > 0 ? displayRating : ""}
@@ -58,7 +57,6 @@ function StarRating({
 	);
 }
 
-// A helper component to keep the mapping logic clean
 function Star({ isFull, onRate, onHoverIn, starColor, size }) {
 	return (
 		<span

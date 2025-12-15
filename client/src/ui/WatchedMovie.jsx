@@ -20,7 +20,6 @@ export default function WatchedMovie({
                  transition-all duration-300"
 			onClick={() => onSelectMovie(movie.imdbID || movie.id)}
 		>
-			{/* Poster */}
 			<div className="relative aspect-[2/3] w-14 rounded-lg overflow-hidden shadow-md">
 				<img
 					src={movie.Poster}
@@ -29,7 +28,6 @@ export default function WatchedMovie({
 				/>
 			</div>
 
-			{/* Info */}
 			<div className="flex flex-col gap-1 min-w-0">
 				<h3 className="text-base font-semibold text-gray-100 truncate pr-8 font-raleway group-hover:text-indigo-300 transition-colors">
 					{movie.Title}
@@ -59,7 +57,6 @@ export default function WatchedMovie({
 				</div>
 			</div>
 
-			{/* Delete Button - Appears on Hover */}
 			<button
 				className="absolute right-3 p-2 rounded-full text-gray-500 opacity-0 
                    group-hover:opacity-100 hover:bg-rose-500/10 hover:text-rose-500 

@@ -20,10 +20,8 @@ function Movie({ movie, onSelectMovie, onAddWatch, isWatched }) {
                  hover:shadow-[0_0_20px_rgba(99,102,241,0.15)] 
                  transition-all duration-300 overflow-hidden"
 		>
-			{/* Glowing Backdrop Effect on Hover */}
 			<div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-			{/* Poster */}
 			<div className="relative w-[60px] h-[88px] flex-shrink-0 rounded-lg overflow-hidden shadow-lg group-hover:scale-105 transition-transform duration-300">
 				{movie.Poster && movie.Poster !== "N/A" ? (
 					<img
@@ -38,7 +36,6 @@ function Movie({ movie, onSelectMovie, onAddWatch, isWatched }) {
 				)}
 			</div>
 
-			{/* Info */}
 			<div className="flex flex-col flex-grow min-w-0 z-10">
 				<h3 className="text-lg font-bold text-gray-100 truncate pr-2 font-poppins group-hover:text-indigo-300 transition-colors">
 					{movie.Title}
@@ -49,7 +46,6 @@ function Movie({ movie, onSelectMovie, onAddWatch, isWatched }) {
 				</p>
 			</div>
 
-			{/* Action Button */}
 			<button
 				onClick={(e) => {
 					e.stopPropagation();

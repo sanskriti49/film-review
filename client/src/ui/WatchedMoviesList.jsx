@@ -62,7 +62,6 @@ export default function WatchedMoviesList({
 
 	return (
 		<div className="flex flex-col gap-8 pb-10">
-			{/* Watched Movies Section */}
 			<div>
 				<h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4 pl-1 flex items-center gap-2">
 					<Library className="w-4 h-4" /> Your Collection
@@ -95,17 +94,11 @@ export default function WatchedMoviesList({
 				</ul>
 			</div>
 
-			{/* Recommendations Section */}
 			<div className="pt-4 border-t border-white/5">
 				<h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400 mb-4 flex items-center gap-2 font-cinzel">
 					<Sparkles className="w-4 h-4 text-fuchsia-400" /> Recommended For You
 				</h2>
 
-				{/* <RecommendedMoviesGrid
-					movies={similarMovies.length > 0 ? similarMovies : recommendedMovies}
-					onSelect={onSelectRecommended}
-					limit={6} // Limit grid to keep UI clean
-				/> */}
 				<RecommendedMoviesGrid
 					movies={
 						(similarMovies?.length > 0 ? similarMovies : recommendedMovies) ||

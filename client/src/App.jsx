@@ -13,7 +13,7 @@ export default function App() {
 	const [isFetching, setIsFetching] = useState(true);
 
 	useEffect(() => {
-		// This listener fires whenever the user logs in, logs out, or the app refreshes
+		// this listener fires whenever the user logs in, logs out, or the app refreshes
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
 			setUser(currentUser);
 			setIsFetching(false);

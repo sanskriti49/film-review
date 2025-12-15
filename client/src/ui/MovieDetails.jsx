@@ -43,7 +43,6 @@ export default function MovieDetails({
 
 	const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
-	// --- 1. Fetch Movie Details ---
 	useEffect(() => {
 		async function getMovieDetails() {
 			setIsLoading(true);
@@ -78,7 +77,6 @@ export default function MovieDetails({
 		if (selectedId) getMovieDetails();
 	}, [selectedId]);
 
-	// --- 2. Fetch Similar ---
 	useEffect(() => {
 		async function fetchSimilar() {
 			if (!selectedId) return;
@@ -111,7 +109,7 @@ export default function MovieDetails({
 		fetchSimilar();
 	}, [selectedId]);
 
-	// --- 3. Sync User State ---
+	// sync user state ---
 	useEffect(() => {
 		if (watchedMovie) {
 			setUserRating(watchedMovie.userRating);
@@ -192,37 +190,28 @@ export default function MovieDetails({
 		}
 	}
 
-	// --- FIXED ADD FUNCTION ---
 	function handleAdd() {
 		if (isWatched) return;
 		const finalRating = userRating || 0;
 
-		// 1. Create a "Safe" movie object where invalid strings are replaced by numbers
-		// This prevents the "NaN" issue in calculations
 		const safeMovieForList = {
 			...movie,
 			imdbRating: cleanImdbRating,
 			Runtime: cleanRuntime + " min",
 		};
 
-		// 2. Create the watched object
 		const newWatchedMovie = createWatchedMovie(
 			safeMovieForList,
 			finalRating,
 			1
 		);
 
-		// 3. Update Parent State (Source of Truth)
 		onAddWatched(newWatchedMovie);
 
-		// 4. Update Local State
 		handleRatingChange(finalRating);
 		setRatingDecisions(1);
 		setIsRated(finalRating !== 0);
 
-		// 5. NO DUPLICATE setWatched HERE
-
-		// 6. Sync to Server
 		saveRatingToServer(selectedId, finalRating);
 	}
 

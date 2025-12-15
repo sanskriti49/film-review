@@ -1,18 +1,27 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import {
+	User,
+	Mail,
+	Lock,
+	ArrowRight,
+	AlertCircle,
+	Loader2,
+} from "lucide-react";
 import {
 	createUserWithEmailAndPassword,
+	GoogleAuthProvider,
+	signInWithPopup,
 	signInWithEmailAndPassword,
 	updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebase";
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"; // Make sure this is imported
 import ReCAPTCHA from "react-google-recaptcha";
 import { useAlert } from "../contexts/AlertContext";
 
 export default function AuthPage({ setIsAuthenticated }) {
-	const { showAlert } = useAlert(); // Get hook
+	const { showAlert } = useAlert();
 
 	const [isLogin, setIsLogin] = useState(true);
 	const [name, setName] = useState("");
@@ -25,6 +34,16 @@ export default function AuthPage({ setIsAuthenticated }) {
 	const recaptchaRef = useRef(null);
 
 	const navigate = useNavigate();
+
+	const handleGoogleLogin = async () => {
+		try {
+			const provider = new GoogleAuthProvider();
+			await signInWithPopup(auth, provider);
+		} catch (err) {
+			console.error(err);
+			showAlert("Google Sign-In Failed", "error");
+		}
+	};
 
 	const handleAuth = async (e) => {
 		e.preventDefault();
@@ -68,30 +87,29 @@ export default function AuthPage({ setIsAuthenticated }) {
 	};
 
 	return (
-		<div className="min-h-screen bg-[#0f0c29] bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] flex items-center justify-center p-6">
+		<div className="min-h-screen w-full flex items-center justify-center p-6 relative">
+			<div className="fixed inset-0 -z-10 bg-[#0f0c29] bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]"></div>
+
 			<div className="relative w-full max-w-md">
 				{/* Decorative Glow */}
 				<div className="absolute -top-20 -left-20 w-72 h-72 bg-purple-500/30 rounded-full blur-[100px]" />
 				<div className="absolute -bottom-20 -right-20 w-72 h-72 bg-indigo-500/30 rounded-full blur-[100px]" />
 
-				{/* Glass Card */}
 				<div className="relative backdrop-blur-2xl bg-white/10 border border-white/20 shadow-2xl rounded-3xl p-8 overflow-hidden">
-					{/* Header */}
 					<div className="text-center mb-8">
 						<div className="flex items-center justify-center gap-2 mb-2">
 							<span className="text-4xl">🍿</span>
 							<h1 className="text-3xl font-bold cinzel text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-cyan-300">
-								CineTrack
+								CineBuzz
 							</h1>
 						</div>
-						<p className="text-indigo-200/80 text-sm font-raleway tracking-wide">
+						<p className="text-indigo-200/80 font-medium text-sm font-raleway tracking-wide">
 							{isLogin
 								? "Welcome back to your collection"
 								: "Start your cinema journey"}
 						</p>
 					</div>
 
-					{/* Form */}
 					<form onSubmit={handleAuth} className="space-y-5">
 						{!isLogin && (
 							<div className="relative group">
@@ -143,23 +161,57 @@ export default function AuthPage({ setIsAuthenticated }) {
 							</div>
 						)}
 
-						<button
+						<motion.button
+							whileHover={{ scale: 1.02 }}
+							whileTap={{ scale: 0.98 }}
 							type="submit"
-							className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-lg shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2"
+							disabled={loading}
+							className="relative group w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-[length:200%_auto] bg-left hover:bg-right transition-all duration-500 text-white font-bold text-lg shadow-lg shadow-indigo-500/20 border border-white/10 overflow-hidden"
 						>
-							{loading
-								? "Processing..."
-								: isLogin
-								? "Sign In"
-								: "Create Account"}
-
-							{!loading && <ArrowRight className="w-5 h-5" />}
-						</button>
+							<div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+							<div className="cursor-pointer relative flex items-center justify-center gap-2">
+								{loading ? (
+									<>
+										<Loader2 className="w-5 h-5 animate-spin" />
+										<span>Processing...</span>
+									</>
+								) : (
+									<>
+										<span>{isLogin ? "Sign In" : "Create Account"}</span>
+										<ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+									</>
+								)}
+							</div>
+						</motion.button>
 					</form>
 
-					{/* Footer Toggle */}
+					<div className="flex items-center gap-4 my-6">
+						<div className="h-px flex-1 bg-white/20"></div>
+						<span className="text-xs text-indigo-200/50 font-semibold uppercase tracking-widest">
+							Or continue with
+						</span>
+						<div className="h-px flex-1 bg-white/20"></div>
+					</div>
+
+					<motion.button
+						whileHover={{
+							scale: 1.01,
+							backgroundColor: "rgba(255,255,255,0.08)",
+						}}
+						whileTap={{ scale: 0.98 }}
+						onClick={handleGoogleLogin}
+						className="cursor-pointer w-full py-3 rounded-xl bg-white/5 border border-white/10 hover:border-white/25 text-white font-semibold flex items-center justify-center gap-3 transition-colors shadow-lg shadow-black/10"
+					>
+						<img
+							src="https://www.svgrepo.com/show/475656/google-color.svg"
+							alt="Google"
+							className="w-5 h-5"
+						/>
+						<span>Sign in with Google</span>
+					</motion.button>
+
 					<div className="mt-6 text-center">
-						<p className="text-sm text-gray-400">
+						<p className="text-base font-medium text-slate-400">
 							{isLogin ? "Need an account? " : "Have an account? "}
 							<button
 								onClick={() => setIsLogin(!isLogin)}

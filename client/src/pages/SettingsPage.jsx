@@ -1,21 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
 import { NavBar } from "../components/Components";
-import { User, Save, Download, Trash2, ArrowLeft } from "lucide-react";
+import { User, Save, Download, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../contexts/AlertContext";
+import { getWatched } from "../api";
 
 export default function SettingsPage() {
 	const { showAlert } = useAlert();
+	const navigate = useNavigate();
 
-	const user = auth.currentUser;
+	//const user = auth.currentUser;
+	const [user, setUser] = useState(auth.currentUser);
 	const [name, setName] = useState(user?.displayName || "");
 	const [isSaving, setIsSaving] = useState(false);
 	const [message, setMessage] = useState("");
-	const navigate = useNavigate();
+	const [isExporting, setIsExporting] = useState(false);
 
-	// 1. Update Profile Name
+	const [loadingAuth, setLoadingAuth] = useState(true); // Add loading state
+
+	useEffect(() => {
+		const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+			setUser(currentUser);
+			if (currentUser) {
+				setName(currentUser.displayName || "");
+			}
+			setLoadingAuth(false);
+		});
+		return () => unsubscribe();
+	}, []);
+
+	if (loadingAuth) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-[#0f0c29] text-white">
+				Loading...
+			</div>
+		);
+	}
+
+	if (!user) {
+		navigate("/login");
+		return null;
+	}
+
 	const handleUpdateProfile = async (e) => {
 		e.preventDefault();
 		setIsSaving(true);
@@ -48,10 +76,33 @@ export default function SettingsPage() {
 		}
 	};
 
-	// 2. Export Data Feature (Fake fetch for demo, relies on backend API)
 	const handleExport = async () => {
-		// You would typically fetch /watched here and trigger a file download
-		alert("This would download a .json file of your movies!");
+		setIsExporting(true);
+		try {
+			const data = await getWatched();
+			const jsonString = JSON.stringify(data, null, 2); //a blob(file-like obj)
+			const blob = new Blob([jsonString], { type: "application/json" });
+
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = url;
+
+			const date = new Date().toISOString().split("T")[0];
+			link.download = `cinebuzz-data-export-${date}.json`;
+
+			document.body.appendChild(link); //triggers download
+			link.click();
+
+			document.body.removeChild(link); // cleanup
+			URL.revokeObjectURL(url);
+
+			showAlert("Data exported successfully! 📥", "success");
+		} catch (error) {
+			console.error("Export failed:", error);
+			showAlert("Failed to export data ❌", "error");
+		} finally {
+			setIsExporting(false);
+		}
 	};
 
 	return (
@@ -74,7 +125,6 @@ export default function SettingsPage() {
 				</p>
 
 				<div className="space-y-6">
-					{/* SECTION 1: PROFILE */}
 					<div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md">
 						<h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
 							<User className="w-5 h-5 text-indigo-400" /> Profile
@@ -126,7 +176,6 @@ export default function SettingsPage() {
 						</form>
 					</div>
 
-					{/* SECTION 2: DATA */}
 					<div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-md">
 						<h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
 							<Download className="w-5 h-5 text-cyan-400" /> Data & Privacy
@@ -136,13 +185,21 @@ export default function SettingsPage() {
 						</p>
 						<button
 							onClick={handleExport}
-							className="cursor-pointer px-4 py-2 border border-white/20 rounded-lg text-sm text-indigo-100 hover:bg-white/5 transition flex items-center gap-2"
+							disabled={isExporting}
+							className="cursor-pointer px-4 py-2 border border-white/20 rounded-lg text-sm text-indigo-100 hover:bg-white/5 transition flex items-center gap-2 disabled:opacity-50"
 						>
-							<Download className="w-4 h-4" /> Export Data
+							{isExporting ? (
+								<>
+									<Loader2 className="w-4 h-4 animate-spin" /> Exporting...
+								</>
+							) : (
+								<>
+									<Download className="w-4 h-4" /> Export Data
+								</>
+							)}{" "}
 						</button>
 					</div>
 
-					{/* SECTION 3: DANGER ZONE */}
 					<div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 backdrop-blur-md">
 						<h2 className="text-xl font-semibold text-red-400 mb-4 flex items-center gap-2">
 							<Trash2 className="w-5 h-5" /> Danger Zone

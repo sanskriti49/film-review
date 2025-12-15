@@ -7,7 +7,7 @@ import {
 	UserMenu,
 	MobileMenu,
 } from "../components/Components";
-import { Sparkles, UserRound } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import MovieList from "../ui/MovieList";
 import MovieDetails from "../ui/MovieDetails";
 import WatchedMoviesList from "../ui/WatchedMoviesList";
@@ -19,8 +19,10 @@ import { getWatched, addWatchedMovie, deleteWatchedMovie } from "../api";
 import { auth } from "../firebase";
 import { useAlert } from "../contexts/AlertContext";
 
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+
 export default function Dashboard({ user }) {
-	const { showAlert } = useAlert(); // Get hook
+	const { showAlert } = useAlert();
 
 	const [watched, setWatched] = useState([]);
 	const [query, setQuery] = useState("");
@@ -31,8 +33,6 @@ export default function Dashboard({ user }) {
 	const [trendingDetails, setTrendingDetails] = useState([]);
 	const [ratingDecisions, setRatingDecisions] = useState(0);
 	const { movies, isLoading, error } = useMovies(query);
-
-	const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 	function handleSelectMovie(id) {
 		setSelectedId((selectedId) => (id === selectedId ? null : id));
@@ -97,7 +97,7 @@ export default function Dashboard({ user }) {
 		const isMovieWatched = isMovieInList(watched, correctImdbID);
 
 		if (isMovieWatched) {
-			showAlert("Movie already in library!", "error"); // Alert for duplicate
+			showAlert("Movie already in library!", "error");
 			return;
 		}
 
@@ -115,7 +115,7 @@ export default function Dashboard({ user }) {
 			);
 
 			setWatched((prev) => [...prev, newWatchedMovie]);
-			showAlert(`Added "${newWatchedMovie.Title}" to library!`, "success"); // Success alert
+			showAlert(`Added "${newWatchedMovie.Title}" to library!`, "success");
 
 			try {
 				await addWatchedMovie(newWatchedMovie);
@@ -128,11 +128,10 @@ export default function Dashboard({ user }) {
 	}
 
 	async function handleDeleteWatch(imdbID) {
-		// Optimistic UI update
+		// Optimistic ui update
 		setWatched((prev) => prev.filter((m) => m.imdbID !== imdbID));
 		showAlert("Movie removed from library", "success");
 		// REAL DB delete
-
 		try {
 			await deleteWatchedMovie(imdbID);
 		} catch (err) {
@@ -143,12 +142,11 @@ export default function Dashboard({ user }) {
 	useEffect(() => {
 		async function loadData() {
 			try {
-				// Wait for Firebase to confirm identity so we have a token
+				// wait for Firebase to confirm identity so we have a token
 				await auth.authStateReady();
 
 				if (auth.currentUser) {
 					const data = await getWatched();
-					// setWatched(data);
 					setWatched(
 						data.map((m) => ({
 							imdbID: m.imdbid,
@@ -165,16 +163,16 @@ export default function Dashboard({ user }) {
 			}
 		}
 		loadData();
-	}, []);
+	}, [user]);
 
 	useEffect(() => {
 		const isMovieWatched = findMovieInList(watched, selectedId);
 		setIsAdded(Boolean(isMovieWatched));
 
 		if (isMovieWatched) {
-			setUserRating(isMovieWatched.userRating || 0); // Set user rating from watched list
+			setUserRating(isMovieWatched.userRating || 0);
 		} else {
-			setUserRating(null); // Reset rating if the movie is new
+			setUserRating(null);
 		}
 	}, [watched, selectedId]);
 
@@ -205,21 +203,6 @@ export default function Dashboard({ user }) {
 
 		getTrendingWithDetails();
 	}, []);
-
-	// useEffect(() => {
-	// 	async function getRecommendations() {
-	// 		try {
-	// 			const res = await fetch("http://localhost:8000/recommendations/4");
-	// 			if (!res.ok) throw new Error("Failed to fetch");
-	// 			const data = await res.json();
-	// 			setRecommended(data);
-	// 			// console.log("Recommended movies: ", data);
-	// 		} catch (err) {
-	// 			console.error("Error fetching recommendations:", err);
-	// 		}
-	// 	}
-	// 	getRecommendations();
-	// }, []);
 
 	const isSearching = query.length > 2;
 

@@ -21,7 +21,6 @@ export default function RecommendedMoviesGrid({ movies, onSelect, limit = 8 }) {
 								<Clapperboard className="w-8 h-8 text-slate-500" />
 							</div>
 						)}
-						{/* Hover Overlay */}
 						<div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
 							<span className="text-white text-xs font-bold border border-white/30 px-2 py-1 rounded-full backdrop-blur-sm">
 								View

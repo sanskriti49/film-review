@@ -12,19 +12,24 @@ import {
 } from "lucide-react";
 import { auth } from "../firebase";
 
-// --- 1. LOGO COMPONENT ---
 export function Logo() {
+	const navigate = useNavigate(); // Add this hook
+
 	return (
-		<div className="flex items-center gap-2 mr-4">
-			<span className="cursor-pointer text-3xl">🍿</span>
-			<h1 className="cursor-pointer text-2xl font-bold cinzel text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-cyan-300 hidden sm:block">
-				CineTrack
+		<div
+			onClick={() => navigate("/")} // Add the click here
+			className="flex items-center gap-2 mr-4 cursor-pointer group" // Added group for hover effects
+		>
+			<span className="text-3xl group-hover:scale-110 transition-transform">
+				🍿
+			</span>
+			<h1 className="text-2xl font-bold cinzel text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-cyan-300 hidden sm:block">
+				CineBuzz
 			</h1>
 		</div>
 	);
 }
 
-// --- 2. SEARCH COMPONENT (Responsive) ---
 export function Search({ query, setQuery }) {
 	const inputRef = useRef(null);
 
@@ -55,7 +60,6 @@ export function Search({ query, setQuery }) {
 	);
 }
 
-// --- 3. DESKTOP USER DROPDOWN ---
 export function UserMenu({ user }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
@@ -107,7 +111,10 @@ export function UserMenu({ user }) {
 								</p>
 							</div>
 
-							<button className="cursor-pointer w-full text-left px-4 py-2.5 text-sm text-indigo-100 hover:bg-indigo-500/20 flex items-center gap-2 transition-colors">
+							<button
+								onClick={() => navigate("/settings")}
+								className="cursor-pointer w-full text-left px-4 py-2.5 text-sm text-indigo-100 hover:bg-indigo-500/20 flex items-center gap-2 transition-colors"
+							>
 								<Settings className="w-4 h-4" /> Account Settings
 							</button>
 
@@ -125,225 +132,10 @@ export function UserMenu({ user }) {
 	);
 }
 
-// --- 4. MOBILE HAMBURGER MENU ---
-// export function MobileMenu({ user }) {
-// 	const [isOpen, setIsOpen] = useState(false);
-// 	const navigate = useNavigate();
-
-// 	const handleLogout = async () => {
-// 		await auth.signOut();
-// 		navigate("/login");
-// 	};
-
-// 	return (
-// 		<div className="md:hidden ml-2">
-// 			<button
-// 				onClick={() => setIsOpen(true)}
-// 				className="cursor-pointer p-2 text-indigo-200 hover:bg-white/10 rounded-lg transition"
-// 			>
-// 				<Menu className="w-6 h-6" />
-// 			</button>
-
-// 			<AnimatePresence>
-// 				{isOpen && (
-// 					<>
-// 						<motion.div
-// 							initial={{ opacity: 0 }}
-// 							animate={{ opacity: 1 }}
-// 							exit={{ opacity: 0 }}
-// 							onClick={() => setIsOpen(false)}
-// 							className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
-// 						/>
-// 						<motion.div
-// 							initial={{ x: "100%" }}
-// 							animate={{ x: 0 }}
-// 							exit={{ x: "100%" }}
-// 							transition={{ type: "spring", damping: 25, stiffness: 200 }}
-// 							className="fixed right-0 top-0 h-full w-[80%] max-w-sm bg-[#161229] border-l border-white/10 shadow-2xl z-50 p-6 flex flex-col"
-// 						>
-// 							<div className="flex items-center justify-between mb-8">
-// 								<span className="text-2xl font-bold text-white">Menu</span>
-// 								<button
-// 									onClick={() => setIsOpen(false)}
-// 									className="cursor-pointer p-2 text-indigo-300 hover:bg-white/10 rounded-full"
-// 								>
-// 									<X className="w-6 h-6" />
-// 								</button>
-// 							</div>
-
-// 							{user ? (
-// 								<div className="space-y-6 ">
-// 									<div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/5">
-// 										<div className="p-2 bg-indigo-500/20 rounded-full">
-// 											<UserRound className="w-6 h-6 text-indigo-200" />
-// 										</div>
-// 										<div className="overflow-hidden">
-// 											<p className="font-bold text-white truncate">
-// 												{user.displayName || "User"}
-// 											</p>
-// 											<p className="text-xs text-indigo-300 truncate">
-// 												{user.email}
-// 											</p>
-// 										</div>
-// 									</div>
-
-// 									<div className="space-y-2">
-// 										<button className="cursor-pointer w-full text-left py-3 px-4 rounded-lg text-indigo-100 hover:bg-white/5 transition flex items-center gap-3">
-// 											<Settings className="w-5 h-5" /> Settings
-// 										</button>
-// 										<button
-// 											onClick={handleLogout}
-// 											className="cursor-pointer w-full text-left py-3 px-4 rounded-lg text-red-300 hover:bg-red-500/10 transition flex items-center gap-3"
-// 										>
-// 											<LogOut className="w-5 h-5" /> Sign Out
-// 										</button>
-// 									</div>
-// 								</div>
-// 							) : (
-// 								<div className="mt-auto">
-// 									<Link
-// 										to="/login"
-// 										className="cursor-pointer block w-full text-center py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 transition shadow-lg"
-// 										onClick={() => setIsOpen(false)}
-// 									>
-// 										Log In / Sign Up
-// 									</Link>
-// 								</div>
-// 							)}
-// 						</motion.div>
-// 					</>
-// 				)}
-// 			</AnimatePresence>
-// 		</div>
-// 	);
-// }
-
-// --- 4. MOBILE HAMBURGER MENU (Fixed Background) ---
-// export function MobileMenu({ user }) {
-// 	const [isOpen, setIsOpen] = useState(false);
-// 	const navigate = useNavigate();
-
-// 	const handleLogout = async () => {
-// 		setIsOpen(false);
-// 		await auth.signOut();
-// 		navigate("/login");
-// 	};
-
-// 	return (
-// 		<div className="md:hidden ml-2">
-// 			<button
-// 				onClick={() => setIsOpen(true)}
-// 				className="cursor-pointer p-2 text-indigo-200 hover:bg-white/10 rounded-lg transition"
-// 			>
-// 				<Menu className="w-6 h-6" />
-// 			</button>
-
-// 			<AnimatePresence>
-// 				{isOpen && (
-// 					<>
-// 						{/* 1. BACKDROP: Dark & Blurry to hide the app behind */}
-// 						<motion.div
-// 							initial={{ opacity: 0 }}
-// 							animate={{ opacity: 1 }}
-// 							exit={{ opacity: 0 }}
-// 							onClick={() => setIsOpen(false)}
-// 							className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60]"
-// 						/>
-
-// 						{/* 2. DRAWER: Solid Background #0b0a1f to prevent text bleeding */}
-// 						<motion.div
-// 							initial={{ x: "100%" }}
-// 							animate={{ x: 0 }}
-// 							exit={{ x: "100%" }}
-// 							transition={{ type: "spring", damping: 25, stiffness: 200 }}
-// 							className="fixed right-0 top-0 h-full w-[85%] max-w-sm bg-[#0b0a1f] border-l border-white/10 shadow-2xl z-[70] p-6 flex flex-col"
-// 						>
-// 							{/* Header */}
-// 							<div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
-// 								<div className="flex items-center gap-2">
-// 									<span className="text-2xl">🍿</span>
-// 									<span className="text-xl font-bold text-white cinzel tracking-wide">
-// 										CineTrack
-// 									</span>
-// 								</div>
-// 								<button
-// 									onClick={() => setIsOpen(false)}
-// 									className="cursor-pointer p-2 text-indigo-300 hover:bg-white/10 rounded-full transition"
-// 								>
-// 									<X className="w-6 h-6" />
-// 								</button>
-// 							</div>
-
-// 							{user ? (
-// 								<div className="flex-1 flex flex-col gap-6">
-// 									{/* User Profile Card - Solid Slate Background */}
-// 									<div className="flex items-center gap-4 p-4 bg-slate-900 rounded-2xl border border-indigo-500/20 shadow-lg">
-// 										<div className="p-3 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full text-white shadow-inner">
-// 											<UserRound className="w-6 h-6" />
-// 										</div>
-// 										<div className="overflow-hidden">
-// 											<p className="font-bold text-white text-lg truncate">
-// 												{user.displayName || "User"}
-// 											</p>
-// 											<p className="text-xs text-indigo-300 truncate">
-// 												{user.email}
-// 											</p>
-// 										</div>
-// 									</div>
-
-// 									{/* Navigation Links */}
-// 									<div className="space-y-2">
-// 										<Link
-// 											to="/settings"
-// 											onClick={() => setIsOpen(false)}
-// 											className="group w-full flex items-center gap-4 p-4 rounded-xl text-indigo-100 hover:bg-indigo-600/20 hover:text-white transition-all border border-transparent hover:border-indigo-500/30"
-// 										>
-// 											<Settings className="w-5 h-5 text-indigo-400 group-hover:text-white transition-colors" />
-// 											<span className="font-medium">Settings</span>
-// 										</Link>
-
-// 										<div className="h-px bg-white/5 my-2" />
-
-// 										<button
-// 											onClick={handleLogout}
-// 											className="cursor-pointer group w-full flex items-center gap-4 p-4 rounded-xl text-red-300 hover:bg-red-500/10 hover:text-red-200 transition-all border border-transparent hover:border-red-500/20"
-// 										>
-// 											<LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
-// 											<span className="font-medium">Sign Out</span>
-// 										</button>
-// 									</div>
-// 								</div>
-// 							) : (
-// 								<div className="mt-auto">
-// 									<Link
-// 										to="/login"
-// 										className="cursor-pointer block w-full text-center py-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 hover:scale-[1.02] transition-transform"
-// 										onClick={() => setIsOpen(false)}
-// 									>
-// 										Log In / Sign Up
-// 									</Link>
-// 								</div>
-// 							)}
-
-// 							{/* Footer decoration */}
-// 							<div className="mt-auto text-center pt-6">
-// 								<p className="text-[10px] text-indigo-500/40 uppercase tracking-widest">
-// 									CineTrack v1.0
-// 								</p>
-// 							</div>
-// 						</motion.div>
-// 					</>
-// 				)}
-// 			</AnimatePresence>
-// 		</div>
-// 	);
-// }
-// --- 4. MOBILE HAMBURGER MENU (Fixed: Scroll Lock) ---
 export function MobileMenu({ user }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
 
-	// --- LOCK BODY SCROLL WHEN OPEN ---
 	useEffect(() => {
 		if (isOpen) {
 			document.body.style.overflow = "hidden"; // Disable scroll
@@ -351,7 +143,6 @@ export function MobileMenu({ user }) {
 			document.body.style.overflow = "unset"; // Re-enable scroll
 		}
 
-		// Cleanup: Always re-enable scroll when component unmounts
 		return () => {
 			document.body.style.overflow = "unset";
 		};
@@ -375,7 +166,6 @@ export function MobileMenu({ user }) {
 			<AnimatePresence>
 				{isOpen && (
 					<>
-						{/* 1. BACKDROP */}
 						<motion.div
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
@@ -384,7 +174,6 @@ export function MobileMenu({ user }) {
 							className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60]"
 						/>
 
-						{/* 2. DRAWER */}
 						<motion.div
 							initial={{ x: "100%" }}
 							animate={{ x: 0 }}
@@ -392,12 +181,11 @@ export function MobileMenu({ user }) {
 							transition={{ type: "spring", damping: 25, stiffness: 200 }}
 							className="fixed right-0 top-0 h-full w-[85%] max-w-sm bg-[#0b0a1f] border-l border-white/10 shadow-2xl z-[70] p-6 flex flex-col"
 						>
-							{/* Header */}
 							<div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
 								<div className="flex items-center gap-2">
 									<span className="text-2xl">🍿</span>
 									<span className="text-xl font-bold text-white cinzel tracking-wide">
-										CineTrack
+										CineBuzz
 									</span>
 								</div>
 								<button
@@ -425,7 +213,6 @@ export function MobileMenu({ user }) {
 										</div>
 									</div>
 
-									{/* Navigation Links */}
 									<div className="space-y-2">
 										<Link
 											to="/settings"
@@ -459,10 +246,9 @@ export function MobileMenu({ user }) {
 								</div>
 							)}
 
-							{/* Footer decoration */}
 							<div className="mt-auto text-center pt-6">
 								<p className="text-[10px] text-indigo-500/40 uppercase tracking-widest">
-									CineTrack v1.0
+									CineBuzz
 								</p>
 							</div>
 						</motion.div>
@@ -472,7 +258,6 @@ export function MobileMenu({ user }) {
 		</div>
 	);
 }
-// --- 5. MAIN NAVBAR CONTAINER ---
 export function NavBar({ children }) {
 	return (
 		<nav className="sticky top-0 z-40 bg-[#0f0c29]/90 backdrop-blur-md border-b border-white/5 px-4 lg:px-8 py-3.5 shadow-lg">

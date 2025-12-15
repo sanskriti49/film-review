@@ -2,14 +2,13 @@ import express from "express";
 import cors from "cors";
 import { Pool } from "pg";
 import dotenv from "dotenv";
-import admin from "firebase-admin"; // 1. Import Firebase Admin
+import admin from "firebase-admin";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const serviceAccount = require("./serviceAccountKey.json.json");
 
 dotenv.config();
 
-// 2. Initialize Firebase Admin
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
 });
@@ -26,8 +25,7 @@ const pool = new Pool({
 	port: process.env.DB_PORT,
 });
 
-// --- MIDDLEWARE: Verify Firebase Token ---
-// This acts as a security guard. It checks if the user is logged in via Firebase.
+// this acts as a security guard. tt checks if the user is logged in via Firebase.
 const verifyFirebaseToken = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
 
@@ -38,43 +36,36 @@ const verifyFirebaseToken = async (req, res, next) => {
 	const token = authHeader.split(" ")[1];
 
 	try {
-		// A. Ask Google: "Is this token valid?"
 		const decodedToken = await admin.auth().verifyIdToken(token);
 		const { uid, email, name } = decodedToken;
 
-		// B. Sync with Postgres (Ensure user exists in YOUR db)
-		// We use the email to find them or create them if they are new.
+		//  uses the email to find them or create them if they are new.
 		let userResult = await pool.query("SELECT * FROM users WHERE email = $1", [
 			email,
 		]);
 
 		if (userResult.rows.length === 0) {
-			// User is new! Create them in Postgres automatically.
+			// when U=user is new, create them in Postgres automatically.
 			userResult = await pool.query(
 				"INSERT INTO users (name, email, firebase_uid) VALUES ($1, $2, $3) RETURNING *",
 				[name || "User", email, uid]
 			);
 		}
 
-		// C. Attach the Postgres ID to the request so routes can use it
 		req.user = userResult.rows[0];
-		next(); // Proceed to the actual route
+		next();
 	} catch (err) {
 		console.error("Auth Error:", err);
 		return res.status(401).json({ error: "Unauthorized: Invalid token" });
 	}
 };
 
-// --- ROUTES ---
-
-// 1. RECAPTCHA VERIFICATION (Optional Backend Check)
-// If you want to verify captcha on the server side for extra security
 app.post("/verify-captcha", async (req, res) => {
 	const { token } = req.body;
-	const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY; // Add this to .env
+	const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 	try {
-		const fetch = (await import("node-fetch")).default; // Dynamic import for node-fetch
+		const fetch = (await import("node-fetch")).default;
 		const response = await fetch(
 			`https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`,
 			{
@@ -93,7 +84,6 @@ app.post("/verify-captcha", async (req, res) => {
 	}
 });
 
-// 2. Get Movies (Public Route - No Auth Needed)
 app.get("/movies", async (req, res) => {
 	try {
 		const result = await pool.query("SELECT * FROM movies");
@@ -104,10 +94,7 @@ app.get("/movies", async (req, res) => {
 	}
 });
 
-// 3. Get Watched (PROTECTED - Needs Token)
-// Note: We don't need :user_id in the URL anymore because we know who they are from the token!
 app.get("/watched", verifyFirebaseToken, async (req, res) => {
-	// req.user.id comes from our middleware
 	const user_id = req.user.id;
 
 	try {
@@ -121,7 +108,6 @@ app.get("/watched", verifyFirebaseToken, async (req, res) => {
 	}
 });
 
-// 4. Add Watched (PROTECTED)
 app.post("/watched", verifyFirebaseToken, async (req, res) => {
 	const user_id = req.user.id;
 	const { imdbID, Title, Poster, runtime, imdbRating, userRating } = req.body;
@@ -144,7 +130,6 @@ app.post("/watched", verifyFirebaseToken, async (req, res) => {
 			return res.json(updated.rows[0]);
 		}
 
-		// Insert new record
 		const result = await pool.query(
 			"INSERT INTO watched (user_id, imdbid, title, poster, runtime, imdbrating, userrating) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
 			[user_id, imdbID, Title, Poster, runtime, imdbRating, userRating]
@@ -156,7 +141,6 @@ app.post("/watched", verifyFirebaseToken, async (req, res) => {
 	}
 });
 
-// 5. Recommendations (PROTECTED)
 app.get("/recommendations", verifyFirebaseToken, async (req, res) => {
 	const user_id = req.user.id;
 
@@ -197,7 +181,6 @@ app.delete("/watched/:imdbID", verifyFirebaseToken, async (req, res) => {
 	}
 });
 
-// 6. Update User Profile (PROTECTED)
 app.put("/user/profile", verifyFirebaseToken, async (req, res) => {
 	const user_id = req.user.id; // From Postgres
 	const { displayName } = req.body;
