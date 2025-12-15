@@ -4,20 +4,20 @@ import { Pool } from "pg";
 import dotenv from "dotenv";
 import admin from "firebase-admin";
 import { createRequire } from "module";
+
+dotenv.config();
+
 const require = createRequire(import.meta.url);
+
 const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
 	? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
 	: require("./serviceAccountKey.json");
 
-admin.initializeApp({
-	credential: admin.credential.cert(serviceAccount),
-});
-
-dotenv.config();
-
-admin.initializeApp({
-	credential: admin.credential.cert(serviceAccount),
-});
+if (!admin.apps.length) {
+	admin.initializeApp({
+		credential: admin.credential.cert(serviceAccount),
+	});
+}
 
 const app = express();
 app.use(cors());
