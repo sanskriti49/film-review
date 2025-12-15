@@ -5,7 +5,13 @@ import dotenv from "dotenv";
 import admin from "firebase-admin";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const serviceAccount = require("./serviceAccountKey.json.json");
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
+	? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+	: require("./serviceAccountKey.json");
+
+admin.initializeApp({
+	credential: admin.credential.cert(serviceAccount),
+});
 
 dotenv.config();
 
