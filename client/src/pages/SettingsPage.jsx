@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { useAlert } from "../contexts/AlertContext";
 import { getWatched } from "../api";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function SettingsPage() {
 	const { showAlert } = useAlert();
 	const navigate = useNavigate();
@@ -51,19 +53,14 @@ export default function SettingsPage() {
 			await updateProfile(user, { displayName: name });
 
 			const token = await user.getIdToken();
-			const res = await fetch(
-				`${
-					import.meta.env.VITE_API_URL || "http://localhost:5000"
-				}/user/profile`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
-					body: JSON.stringify({ displayName: name }),
-				}
-			);
+			const res = await fetch(`${API_URL}/user/profile`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({ displayName: name }),
+			});
 			if (!res.ok) {
 				showAlert("Error updating profile ❌", "error");
 			}

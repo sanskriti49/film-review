@@ -14,6 +14,8 @@ import {
 import RecommendedMoviesGrid from "./RecommendedMoviesGrid";
 import { auth } from "../firebase";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function MovieDetails({
 	watched,
 	selectedId,
@@ -152,24 +154,21 @@ export default function MovieDetails({
 			if (!user) return;
 			const token = await user.getIdToken();
 
-			await fetch(
-				`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/watched`,
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${token}`,
-					},
-					body: JSON.stringify({
-						imdbID,
-						Title: title,
-						Poster: poster,
-						runtime: cleanRuntime,
-						imdbRating: cleanImdbRating,
-						userRating: rating,
-					}),
-				}
-			);
+			await fetch(`${API_URL}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					imdbID,
+					Title: title,
+					Poster: poster,
+					runtime: cleanRuntime,
+					imdbRating: cleanImdbRating,
+					userRating: rating,
+				}),
+			});
 		} catch (err) {
 			console.error("Save failed", err);
 		}
