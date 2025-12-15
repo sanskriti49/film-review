@@ -51,7 +51,7 @@ const verifyFirebaseToken = async (req, res, next) => {
 		]);
 
 		if (userResult.rows.length === 0) {
-			// when U=user is new, create them in Postgres automatically.
+			// when user is new, create them in Postgres automatically.
 			userResult = await pool.query(
 				"INSERT INTO users (name, email, firebase_uid) VALUES ($1, $2, $3) RETURNING *",
 				[name || "User", email, uid]
@@ -68,6 +68,46 @@ const verifyFirebaseToken = async (req, res, next) => {
 
 app.get("/", (req, res) => {
 	res.send("CineBuzz API is running! 🚀");
+});
+
+app.get("/setup-db", async (req, res) => {
+	try {
+		await pool.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100),
+                email VARCHAR(255) NOT NULL UNIQUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                firebase_uid VARCHAR(255) UNIQUE
+            );
+        `);
+		await pool.query(`
+            CREATE TABLE IF NOT EXISTS watched (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                imdbid VARCHAR(50) NOT NULL,
+                title VARCHAR(255),
+                poster VARCHAR(500),
+                runtime INTEGER,
+                imdbrating NUMERIC,
+                userrating NUMERIC,
+                countratingdecisions INTEGER DEFAULT 1
+            );
+        `);
+
+		await pool.query(`
+            CREATE TABLE IF NOT EXISTS movies (
+                id SERIAL PRIMARY KEY,
+                imdbid VARCHAR(50) UNIQUE,
+                title VARCHAR(255),
+                poster TEXT,
+                imdbrating NUMERIC
+            );
+        `);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Error creating tables: " + err.message);
+	}
 });
 
 app.post("/verify-captcha", async (req, res) => {

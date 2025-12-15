@@ -16,11 +16,11 @@ import {
 	updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebase";
-import { motion } from "framer-motion"; // Make sure this is imported
+import { motion } from "framer-motion";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useAlert } from "../contexts/AlertContext";
 
-export default function AuthPage({ setIsAuthenticated }) {
+export default function AuthPage() {
 	const { showAlert } = useAlert();
 
 	const [isLogin, setIsLogin] = useState(true);
@@ -91,7 +91,6 @@ export default function AuthPage({ setIsAuthenticated }) {
 			<div className="fixed inset-0 -z-10 bg-[#0f0c29] bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]"></div>
 
 			<div className="relative w-full max-w-md">
-				{/* Decorative Glow */}
 				<div className="absolute -top-20 -left-20 w-72 h-72 bg-purple-500/30 rounded-full blur-[100px]" />
 				<div className="absolute -bottom-20 -right-20 w-72 h-72 bg-indigo-500/30 rounded-full blur-[100px]" />
 
